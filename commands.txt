@@ -292,5 +292,13 @@ Q8-Q9 - TOOLS, DOCUMENTS AND REPORT
   ~/devops-lab2$ jenkins --version
   ~/devops-lab2$ python3 --version && git --version
 
+[E48] Commit and push the documentation
+  ~/devops-lab2$ git add -A
+  ~/devops-lab2$ git status --short | wc -l
+  ~/devops-lab2$ git commit -q -m "Add Lab 2 evidence, command record and report"
+  ~/devops-lab2$ git show --stat --oneline HEAD | tail -n 3
+  ~/devops-lab2$ git push
+  ~/devops-lab2$ git log --oneline -n 8
+
 Repository: https://github.com/Adityaporwal18/devops-lab2
 Docker Hub:  https://hub.docker.com/r/adityaporwal18/devops-lab2

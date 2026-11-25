@@ -1,0 +1,28 @@
+aditya@lima-devops:~/devops-lab2$ git add -A
+aditya@lima-devops:~/devops-lab2$ git status --short | wc -l
+89
+aditya@lima-devops:~/devops-lab2$ git commit -q -m "Add Lab 2 evidence, command record and report"
+aditya@lima-devops:~/devops-lab2$ git show --stat --oneline HEAD | tail -n 3
+ .../screenshots/46-final-app-v2-in-browser.png     | Bin 0 -> 29672 bytes
+ docs/evidence/screenshots/47-tool-versions.png     | Bin 0 -> 144632 bytes
+ 89 files changed, 1928 insertions(+), 438 deletions(-)
+aditya@lima-devops:~/devops-lab2$ git push
+Enumerating objects: 97, done.
+Counting objects: 100% (97/97), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (92/92), done.
+Writing objects: 100% (93/93), 10.04 MiB | 7.91 MiB/s, done.
+Total 93 (delta 6), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (6/6), completed with 1 local object.
+To https://github.com/Adityaporwal18/devops-lab2.git
+   91e8441..5e96680  main -> main
+aditya@lima-devops:~/devops-lab2$ git log --oneline -n 8
+5e96680 (HEAD -> main, origin/main, origin/HEAD) Add Lab 2 evidence, command record and report
+91e8441 Deploy application version v2 through the pipeline
+e036689 Update Jenkinsfile for this environment, add job configuration and bind-mount files
+af59436 Update application to Version 2
+db120df Use Docker Hub image adityaporwal18/devops-lab2:v1 in the Deployment
+6c69ae6 Set application to Version 1 for the first image build
+4023945 Remove outdated evidence and docs before re-running Lab 2
+b1226b6 Initial commit
+aditya@lima-devops:~/devops-lab2$ 

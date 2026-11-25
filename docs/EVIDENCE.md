@@ -17,7 +17,7 @@ Evidence is grouped by lab question. The number at the start of each file name g
 | [Q5 - Deploy an application to Kubernetes](#q5---deploy-an-application-to-kubernetes) | E22-E27 |
 | [Q6 - Kubernetes deployment strategies](#q6---kubernetes-deployment-strategies) | E28-E33 |
 | [Q7 - Configure continuous deployment](#q7---configure-continuous-deployment) | E34-E46 |
-| [Q8-Q9 - Tools, documents and report](#q8-q9---tools-documents-and-report) | E47-E47 |
+| [Q8-Q9 - Tools, documents and report](#q8-q9---tools-documents-and-report) | E47-E50 |
 
 ## Q1 - Containerize a sample application using Docker
 
@@ -394,3 +394,23 @@ Versions of the tools used: Docker 29.10.1, Docker Compose v5.8.0, kubectl v1.37
 ![E47 Tool versions](evidence/screenshots/47-tool-versions.png)
 
 Source: [Terminal log](evidence/logs/47-tool-versions.txt)
+
+### E48 - Commit and push the documentation
+
+The evidence gallery, command record, report and screenshots are committed and pushed to GitHub.
+
+![E48 Commit and push the documentation](evidence/screenshots/48-commit-and-push-documentation.png)
+
+Source: [Terminal log](evidence/logs/48-commit-and-push-documentation.txt)
+
+### E49 - Build history after the documentation push
+
+The documentation push was also picked up by SCM polling: build #3 started automatically, re-applied the unchanged manifests and succeeded.
+
+![E49 Build history after the documentation push](evidence/screenshots/49-jenkins-build-history-after-docs-push.png)
+
+### E50 - Final repository on GitHub
+
+The repository on GitHub with the Dockerfile, Compose file, Kubernetes manifests, Jenkinsfile, report, command record and the `docs` folder.
+
+![E50 Final repository on GitHub](evidence/screenshots/50-github-final-repository.png)

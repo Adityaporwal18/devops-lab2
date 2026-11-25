@@ -152,6 +152,7 @@ Jenkins runs as its own Linux user, so a sudoers rule allows `jenkins` to run `/
 |---|---|---|---|---|---|
 | #1 | 13:58:36 | Started by user Aditya Porwal | `e036689` | Manifest with v1 and 2 replicas (`deployment configured`) | SUCCESS, 14.5 s |
 | #2 | 14:00:12 | Started by an SCM change | `91e8441` | Manifest changed to v2 | SUCCESS, 7.7 s |
+| #3 | 14:06:12 | Started by an SCM change (documentation push) | `5e96680` | Manifests unchanged, v2 stays deployed | SUCCESS, 10.1 s |
 
 **Continuous deployment demonstration.** The image tag in `kubernetes/deployment.yaml` was changed from v1 to v2 and pushed at 13:59:37. No build was started manually. Polling at 14:00:00 reported *Changes found*, build #2 started at 14:00:12, applied the manifest and the cluster moved to `adityaporwal18/devops-lab2:v2`.
 
