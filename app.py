@@ -6,8 +6,8 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     return """
-    <h1>DevOps Lab 2 - Version 1</h1>
-    <p>Flask application running in a Docker container.</p>
+    <h1>DevOps Lab 2 - Version 2</h1>
+    <p>Kubernetes rolling update completed successfully!</p>
     """
 
 
