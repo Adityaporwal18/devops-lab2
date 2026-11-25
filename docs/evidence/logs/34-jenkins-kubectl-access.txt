@@ -1,0 +1,11 @@
+aditya@lima-devops:~/devops-lab2$ kill %2
+aditya@lima-devops:~/devops-lab2$ echo 'jenkins ALL=(aditya) NOPASSWD: /usr/local/bin/kubectl' | sudo tee /etc/sudoers.d/jenkins-kubectl
+jenkins ALL=(aditya) NOPASSWD: /usr/local/bin/kubectl
+[2]+  Terminated              kubectl port-forward service/devops-lab2-service 8081:5000 > /tmp/port-forward.log 2>&1
+aditya@lima-devops:~/devops-lab2$ sudo chmod 440 /etc/sudoers.d/jenkins-kubectl
+aditya@lima-devops:~/devops-lab2$ sudo visudo -cf /etc/sudoers.d/jenkins-kubectl
+/etc/sudoers.d/jenkins-kubectl: parsed OK
+aditya@lima-devops:~/devops-lab2$ sudo -u jenkins sudo -H -u aditya kubectl get nodes
+NAME       STATUS   ROLES           AGE   VERSION
+minikube   Ready    control-plane   11m   v1.37.0
+aditya@lima-devops:~/devops-lab2$ 

@@ -1,0 +1,23 @@
+Started on Nov 25, 2026, 2:00:00 PM
+Using strategy: Default
+[poll] Last Built Revision: Revision e0366893650ab5f0db74824f2659f6162d43a554 (refs/remotes/origin/main)
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+ > git --version # timeout=10
+ > git --version # 'git version 2.43.0'
+ > git ls-remote -h -- https://github.com/Adityaporwal18/devops-lab2.git # timeout=10
+Found 1 remote heads on https://github.com/Adityaporwal18/devops-lab2.git
+[poll] Latest remote head revision on refs/heads/main is: 91e84410ef8d1078fd1f4b845d77dbd81f603818
+Using strategy: Default
+[poll] Last Built Revision: Revision e0366893650ab5f0db74824f2659f6162d43a554 (refs/remotes/origin/main)
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+ > git --version # timeout=10
+ > git --version # 'git version 2.43.0'
+ > git ls-remote -h -- https://github.com/Adityaporwal18/devops-lab2.git # timeout=10
+Found 1 remote heads on https://github.com/Adityaporwal18/devops-lab2.git
+[poll] Latest remote head revision on refs/heads/main is: 91e84410ef8d1078fd1f4b845d77dbd81f603818
+Done. Took 2.5 sec
+Changes found

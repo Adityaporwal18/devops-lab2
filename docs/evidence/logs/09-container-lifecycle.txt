@@ -1,0 +1,15 @@
+aditya@lima-devops:~/devops-lab2$ docker ps -a
+CONTAINER ID   IMAGE            COMMAND           CREATED              STATUS                     PORTS                                         NAMES
+db8517597b22   devops-lab2:v1   "python app.py"   About a minute ago   Up About a minute          0.0.0.0:5000->5000/tcp, [::]:5000->5000/tcp   lab2-app
+78d2cce377ba   hello-world      "/hello"          3 minutes ago        Exited (0) 3 minutes ago                                                 musing_antonelli
+aditya@lima-devops:~/devops-lab2$ docker stop lab2-app
+lab2-app
+aditya@lima-devops:~/devops-lab2$ docker ps -a --filter name=lab2-app
+CONTAINER ID   IMAGE            COMMAND           CREATED              STATUS                      PORTS     NAMES
+db8517597b22   devops-lab2:v1   "python app.py"   About a minute ago   Exited (137) 1 second ago             lab2-app
+aditya@lima-devops:~/devops-lab2$ docker start lab2-app
+lab2-app
+aditya@lima-devops:~/devops-lab2$ docker ps --filter name=lab2-app
+CONTAINER ID   IMAGE            COMMAND           CREATED              STATUS        PORTS                                         NAMES
+db8517597b22   devops-lab2:v1   "python app.py"   About a minute ago   Up 1 second   0.0.0.0:5000->5000/tcp, [::]:5000->5000/tcp   lab2-app
+aditya@lima-devops:~/devops-lab2$ 

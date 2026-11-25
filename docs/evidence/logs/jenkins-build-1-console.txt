@@ -1,0 +1,95 @@
+Started by user Aditya Porwal
+Obtained Jenkinsfile from git https://github.com/Adityaporwal18/devops-lab2.git
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/devops-lab2
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository https://github.com/Adityaporwal18/devops-lab2.git
+ > git init /var/lib/jenkins/workspace/devops-lab2 # timeout=10
+Fetching upstream changes from https://github.com/Adityaporwal18/devops-lab2.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.43.0'
+ > git fetch --tags --force --progress -- https://github.com/Adityaporwal18/devops-lab2.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://github.com/Adityaporwal18/devops-lab2.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision e0366893650ab5f0db74824f2659f6162d43a554 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f e0366893650ab5f0db74824f2659f6162d43a554 # timeout=10
+Commit message: "Update Jenkinsfile for this environment, add job configuration and bind-mount files"
+First time build. Skipping changelog.
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+No credentials specified
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/devops-lab2/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/Adityaporwal18/devops-lab2.git # timeout=10
+Fetching upstream changes from https://github.com/Adityaporwal18/devops-lab2.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.43.0'
+ > git fetch --tags --force --progress -- https://github.com/Adityaporwal18/devops-lab2.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision e0366893650ab5f0db74824f2659f6162d43a554 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f e0366893650ab5f0db74824f2659f6162d43a554 # timeout=10
+Commit message: "Update Jenkinsfile for this environment, add job configuration and bind-mount files"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy to Kubernetes)
+[Pipeline] sh
++ sudo -H -u aditya kubectl apply -f kubernetes/deployment.yaml
+deployment.apps/devops-lab2 configured
++ sudo -H -u aditya kubectl apply -f kubernetes/service.yaml
+service/devops-lab2-service unchanged
++ sudo -H -u aditya kubectl rollout status deployment/devops-lab2
+deployment "devops-lab2" successfully rolled out
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Verify)
+[Pipeline] sh
++ sudo -H -u aditya kubectl get deployments
+NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+devops-lab2   2/2     2            2           3m55s
++ sudo -H -u aditya kubectl get pods
+NAME                           READY   STATUS        RESTARTS   AGE
+devops-lab2-6645fd545f-c95ph   1/1     Running       0          111s
+devops-lab2-6645fd545f-g9v75   1/1     Terminating   0          112s
+devops-lab2-6645fd545f-t69nv   1/1     Terminating   0          113s
+devops-lab2-6645fd545f-t85gh   1/1     Running       0          111s
++ sudo -H -u aditya kubectl get services
+NAME                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+devops-lab2-service   NodePort    10.110.134.164   <none>        5000:30080/TCP   3m55s
+kubernetes            ClusterIP   10.96.0.1        <none>        443/TCP          12m
++ sudo -H -u aditya kubectl get deployment devops-lab2 -o jsonpath={.spec.template.spec.containers[0].image}
+adityaporwal18/devops-lab2:v1
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Declarative: Post Actions)
+[Pipeline] echo
+Continuous deployment completed successfully!
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS

@@ -1,0 +1,20 @@
+aditya@lima-devops:~/devops-lab1$ cd ~
+aditya@lima-devops:~$ sudo install -m 0755 -d /etc/apt/keyrings
+aditya@lima-devops:~$ sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+aditya@lima-devops:~$ sudo chmod a+r /etc/apt/keyrings/docker.asc
+aditya@lima-devops:~$ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+aditya@lima-devops:~$ sudo apt update
+Get:1 https://download.docker.com/linux/ubuntu noble InRelease [48.5 kB]
+Ign:2 https://pkg.jenkins.io/debian-stable binary/ InRelease                                              
+Hit:3 https://pkg.jenkins.io/debian-stable binary/ Release              
+Get:4 https://download.docker.com/linux/ubuntu noble/stable arm64 Packages [73.2 kB]
+Hit:6 http://ports.ubuntu.com/ubuntu-ports noble InRelease
+Hit:7 http://ports.ubuntu.com/ubuntu-ports noble-updates InRelease
+Hit:8 http://ports.ubuntu.com/ubuntu-ports noble-backports InRelease
+Hit:9 http://ports.ubuntu.com/ubuntu-ports noble-security InRelease
+Fetched 122 kB in 1s (92.0 kB/s)
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+64 packages can be upgraded. Run 'apt list --upgradable' to see them.
+aditya@lima-devops:~$ 

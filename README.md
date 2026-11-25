@@ -1,131 +1,82 @@
-﻿# DevOps Lab 2 â€” Containerization & Kubernetes Orchestration
+﻿# Lab 2 - Containerization & Kubernetes Orchestration
 
-This repository contains the implementation, documentation, commands, and execution evidence for **Lab 2: Containerization & Kubernetes Orchestration**.
-
-The lab demonstrates Docker containerization and lifecycle management, Docker Hub image publishing, Docker Compose, persistent storage, Docker networking, Kubernetes deployment with Minikube, scaling, rolling updates, rollback, and Jenkins-based continuous deployment.
-
-## Objective
-
-Containerize a sample Flask application with Docker, manage Docker images and containers, demonstrate storage and networking behavior, deploy the application to Kubernetes using Minikube, perform scaling and deployment strategies, and automate Kubernetes manifest application through Jenkins.
-
-## Technology Stack
-
-- Ubuntu 26.04 LTS on WSL2
-- Docker Desktop with WSL integration
-- Docker Compose
-- Docker Hub
-- Python / Flask
-- Kubernetes
-- Minikube
-- kubectl
-- Jenkins
-- Git and GitHub
-
-## Repository Structure
-
-```text
-devops-lab2/
-â”œâ”€â”€ Dockerfile
-â”œâ”€â”€ Jenkinsfile
-â”œâ”€â”€ README.md
-â”œâ”€â”€ REPORT.md
-â”œâ”€â”€ app.py
-â”œâ”€â”€ commands.txt
-â”œâ”€â”€ compose.yaml
-â”œâ”€â”€ requirements.txt
-â”œâ”€â”€ bind-data/                  # bind-mount experiment artifacts
-â”œâ”€â”€ kubernetes/
-â”‚   â”œâ”€â”€ deployment.yaml
-â”‚   â””â”€â”€ service.yaml
-â”œâ”€â”€ docs/
-â”‚   â”œâ”€â”€ ARCHITECTURE.md
-â”‚   â”œâ”€â”€ EVIDENCE.md
-â”‚   â”œâ”€â”€ EXPERIMENTS.md
-â”‚   â”œâ”€â”€ FINAL_CHECKLIST.md
-â”‚   â”œâ”€â”€ evidence/               # screenshots from actual execution
-â”‚   â””â”€â”€ source/
-â”‚       â””â”€â”€ Lab2-Evidence.docx  # original compiled evidence document
-â””â”€â”€ scripts/
-    â””â”€â”€ capture-final-state.sh
-```
-
-## End-to-End Flow
-
-```text
-Application Source
-      |
-      v
-    Docker
-      |
-      +--> Docker Hub: Adityaporwal18/devops-lab2:v1 / v2
-      |
-      v
-GitHub Repository
-      |
-      v
-    Jenkins
-      |
-      | kubectl apply
-      v
-Minikube / Kubernetes
-      |
-      v
-  Deployment
-   /      \
- Pod      Pod
-   \      /
-    Service
-      |
-      v
-Flask Application
-```
-
-## Lab Requirement Coverage
-
-| Q | Requirement | Implementation / Evidence | Status |
-|---|---|---|---|
-| 1 | Containerize sample application | `Dockerfile`, image build, `docker history`, running Flask app | âœ… |
-| 2 | Manage containers and images | list/start/stop/remove, tags, Docker Hub push, Compose | âœ… |
-| 3 | Docker storage | ephemeral data loss, named volume persistence, bind mount | âœ… |
-| 4 | Docker network | custom bridge network, name ping, IP ping, network inspection | âœ… |
-| 5 | Kubernetes deployment | Minikube, Deployment, Service, running pods, app access | âœ… |
-| 6 | Deployment strategies | scaling to 4, rolling update to v2, rollback to v1 | âœ… |
-| 7 | Continuous deployment | Jenkins checkout + `kubectl apply` + rollout verification | âœ… |
-| 8 | Record tools/documents | Dockerfile, YAML, commands, screenshots, report | âœ… |
-| 9 | Final report | `REPORT.md` with architecture, results and observations | âœ… |
-
-## Key Results
-
-- Docker and Docker Compose were verified inside Ubuntu/WSL2.
-- The Flask application was built as a Docker image and accessed at `localhost:5000`.
-- Docker image layers were inspected with `docker history`.
-- `v1` and `latest` image tags were demonstrated.
-- A Flask + Redis multi-container stack ran with Docker Compose.
-- `Adityaporwal18/devops-lab2:v1` and `v2` were pushed to Docker Hub.
-- Container-local data loss after deletion was demonstrated.
-- A named Docker volume preserved data across container replacement.
-- A bind mount demonstrated host-to-container and container-to-host file sharing.
-- Two containers communicated through a custom Docker bridge network by name and IP.
-- Minikube created a Kubernetes control-plane node in `Ready` state.
-- The application ran as two Kubernetes pods behind a NodePort Service.
-- The Deployment was scaled from 2 replicas to 4 replicas.
-- A rolling update changed the application from v1 to v2.
-- Kubernetes rollback restored the previous revision.
-- Jenkins successfully checked out the repository, applied the Kubernetes manifests, waited for rollout completion, verified resources, and finished with `SUCCESS`.
-- The final captured Kubernetes state shows two running pods using `Adityaporwal18/devops-lab2:v2`.
+**Course:** DevOps and Automation Lab (ENSP461)  
+**Student:** Aditya Porwal | **GitHub:** `Adityaporwal18` | **Docker Hub:** `adityaporwal18`  
+**Application:** a small Flask web application, packaged with Docker and deployed to Kubernetes (Minikube) by a Jenkins pipeline.  
+**Environment:** Ubuntu 24.04.5 LTS virtual machine, Docker 29.10.1, Minikube v1.39.0 (Kubernetes v1.37.0), Jenkins 2.580.2. Lab run on 25 November 2026.
 
 ## Documentation
 
-- [Complete Lab Report](REPORT.md)
-- [Command Reference](commands.txt)
-- [Architecture](docs/ARCHITECTURE.md)
-- [Experiment-by-Experiment Procedure](docs/EXPERIMENTS.md)
-- [Evidence Gallery](docs/EVIDENCE.md)
-- [Final Submission Checklist](docs/FINAL_CHECKLIST.md)
-- [Original Evidence Document](docs/source/Lab2-Evidence.docx)
+| Document | Contents |
+|---|---|
+| [Lab report](REPORT.md) | Q1-Q9: procedure, results, architecture and observations |
+| [Evidence gallery](docs/EVIDENCE.md) | Screenshots of every step with captions, plus links to the logs |
+| [Commands executed](commands.txt) | The commands that were run, grouped by question |
+| [Logs](docs/evidence/logs) | Terminal logs, Jenkins console logs and the Git polling log |
 
-## Evidence
+## What the lab covers
 
-All screenshots in `docs/evidence/` were captured from the actual Lab 2 execution and extracted from the submitted evidence document. They are indexed and explained in [docs/EVIDENCE.md](docs/EVIDENCE.md).
+| Question | Topic | Result |
+|---|---|---|
+| Q1 | Containerize the application | Image `devops-lab2:v1` built and run on port 5000 |
+| Q2 | Manage containers and images | Stop/start/remove, tags, Docker Compose, push to Docker Hub |
+| Q3 | Docker storage | Data loss without a volume, named volume, bind mount |
+| Q4 | Docker network | Ping by container name and by IP on a custom network |
+| Q5 | Deploy to Kubernetes | Deployment (2 replicas) and Service on Minikube |
+| Q6 | Deployment strategies | Scale to 4, rolling update to v2, rollback to v1 |
+| Q7 | Continuous deployment | Jenkins applies the manifests after a Git push |
+| Q8-Q9 | Records and report | This repository and [REPORT.md](REPORT.md) |
 
-> Jenkins evidence proves that the pipeline automates Kubernetes manifest application and rollout verification. The captured build was executed from Jenkins; it is not presented as proof of a GitHub webhook unless a webhook/SCM trigger is separately configured.
+## End-to-end flow
+
+```mermaid
+flowchart LR
+    A[app.py + Dockerfile] -->|docker build| B[Image v1 / v2]
+    B -->|docker push| C[Docker Hub<br/>adityaporwal18/devops-lab2]
+    D[GitHub<br/>manifests + Jenkinsfile] -. polled .-> E[Jenkins]
+    E -->|kubectl apply| F[Minikube]
+    C -->|image pull| F
+```
+
+![Jenkins build started by a Git push](docs/evidence/screenshots/40-jenkins-build-2-started-by-scm-change.png)
+
+## Run it yourself
+
+In an Ubuntu terminal with Docker installed:
+
+```bash
+git clone https://github.com/Adityaporwal18/devops-lab2.git
+cd devops-lab2
+docker build -t devops-lab2:v1 .
+docker run -d --name lab2-app -p 5000:5000 devops-lab2:v1
+curl http://localhost:5000/health
+```
+
+On Kubernetes (Minikube running, kubectl configured):
+
+```bash
+kubectl apply -f kubernetes/deployment.yaml
+kubectl apply -f kubernetes/service.yaml
+kubectl rollout status deployment/devops-lab2
+kubectl port-forward service/devops-lab2-service 8081:5000
+```
+
+The published images are `adityaporwal18/devops-lab2:v1` and `:v2`. They were built on an ARM machine (`linux/arm64`).
+
+## Main files
+
+```text
+app.py                      Flask application (/, /health)
+requirements.txt            Flask 3.1.2
+Dockerfile                  Image definition (python:3.12-slim)
+compose.yaml                Web service + Redis
+kubernetes/deployment.yaml  Deployment, 2 replicas, image from Docker Hub
+kubernetes/service.yaml     NodePort Service (30080 -> 5000)
+Jenkinsfile                 Checkout -> Deploy to Kubernetes -> Verify
+jenkins/job-config.xml      Jenkins job definition (Pipeline script from SCM)
+bind-data/                  Files created by the bind-mount experiment
+commands.txt                Commands executed in the lab
+REPORT.md                   Lab report
+docs/EVIDENCE.md            Evidence gallery
+docs/evidence/              Screenshots and logs
+```

@@ -1,0 +1,25 @@
+aditya@lima-devops:~/devops-lab2$ git diff -U0 kubernetes/deployment.yaml | tail -n 3
+@@ -17 +17 @@ spec:
+-          image: Adityaporwal18/devops-lab2:v2
++          image: adityaporwal18/devops-lab2:v1
+aditya@lima-devops:~/devops-lab2$ git commit -q -am "Use Docker Hub image adityaporwal18/devops-lab2:v1 in the Deployment"
+aditya@lima-devops:~/devops-lab2$ kubectl apply -f kubernetes/deployment.yaml
+deployment.apps/devops-lab2 created
+aditya@lima-devops:~/devops-lab2$ kubectl apply -f kubernetes/service.yaml
+service/devops-lab2-service created
+aditya@lima-devops:~/devops-lab2$ kubectl rollout status deployment/devops-lab2
+Waiting for deployment "devops-lab2" rollout to finish: 0 of 2 updated replicas are available...
+Waiting for deployment "devops-lab2" rollout to finish: 1 of 2 updated replicas are available...
+deployment "devops-lab2" successfully rolled out
+aditya@lima-devops:~/devops-lab2$ kubectl get deployments
+NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+devops-lab2   2/2     2            2           16s
+aditya@lima-devops:~/devops-lab2$ kubectl get pods -o wide
+NAME                           READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+devops-lab2-6645fd545f-86gdw   1/1     Running   0          17s   10.244.0.3   minikube   <none>           <none>
+devops-lab2-6645fd545f-m5cxn   1/1     Running   0          17s   10.244.0.4   minikube   <none>           <none>
+aditya@lima-devops:~/devops-lab2$ kubectl get services
+NAME                  TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+devops-lab2-service   NodePort    10.110.134.164   <none>        5000:30080/TCP   18s
+kubernetes            ClusterIP   10.96.0.1        <none>        443/TCP          8m51s
+aditya@lima-devops:~/devops-lab2$ 

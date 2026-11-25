@@ -1,0 +1,12 @@
+aditya@lima-devops:~/devops-lab2$ mkdir -p ~/devops-lab2/bind-data
+aditya@lima-devops:~/devops-lab2$ echo "Created from Ubuntu host" > ~/devops-lab2/bind-data/host.txt
+aditya@lima-devops:~/devops-lab2$ docker run --rm -v ~/devops-lab2/bind-data:/data ubuntu cat /data/host.txt
+Created from Ubuntu host
+aditya@lima-devops:~/devops-lab2$ docker run --rm -v ~/devops-lab2/bind-data:/data ubuntu sh -c 'echo "Created from Docker container" > /data/container.txt'
+aditya@lima-devops:~/devops-lab2$ cat ~/devops-lab2/bind-data/container.txt
+Created from Docker container
+aditya@lima-devops:~/devops-lab2$ ls -l ~/devops-lab2/bind-data
+total 8
+-rw-r--r-- 1 aditya aditya 30 Nov 25 13:42 container.txt
+-rw-r--r-- 1 aditya aditya 25 Nov 25 13:42 host.txt
+aditya@lima-devops:~/devops-lab2$ 

@@ -1,0 +1,58 @@
+aditya@lima-devops:~/devops-lab2$ docker network inspect lab2-network
+[
+    {
+        "Name": "lab2-network",
+        "Id": "08f669ae1f27565dc0abf3efaf46861fcf9986af76f703ed49e0a6327299becd",
+        "Created": "2026-11-25T13:42:42.36736359+05:30",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv4": true,
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.18.0.0/16",
+                    "Gateway": "172.18.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Options": {},
+        "Labels": {},
+        "Containers": {
+            "4733ffaff3152e836077424ae0ccf49447ea9ba08476d038ffd9b2e58662af6b": {
+                "Name": "network-b",
+                "EndpointID": "99309b92d795b61de8189740845b4ba03ec10034ffc9061e9acb6b40a3ad14bf",
+                "MacAddress": "fa:00:6f:70:a9:3d",
+                "IPv4Address": "172.18.0.3/16",
+                "IPv6Address": ""
+            },
+            "8f2127a11dedaf2705a99f8003c7d19c901cb2a85398c00bc5d4f1189d1cb12c": {
+                "Name": "network-a",
+                "EndpointID": "9d17e640502b33d0fc923c2573027e041a349ebf45d9caae19b5f7600896ad31",
+                "MacAddress": "ce:e4:ab:6e:e6:bc",
+                "IPv4Address": "172.18.0.2/16",
+                "IPv6Address": ""
+            }
+        },
+        "Status": {
+            "IPAM": {
+                "Subnets": {
+                    "172.18.0.0/16": {
+                        "IPsInUse": 5,
+                        "DynamicIPsAvailable": 65531
+                    }
+                }
+            }
+        }
+    }
+]
+aditya@lima-devops:~/devops-lab2$ 

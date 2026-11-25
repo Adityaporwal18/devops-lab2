@@ -1,0 +1,28 @@
+aditya@lima-devops:~/devops-lab2$ git diff -U0 app.py | tail -n 5
+@@ -9,2 +9,2 @@ def home():
+-    <h1>DevOps Lab 2 - Version 1</h1>
+-    <p>Flask application running in a Docker container.</p>
++    <h1>DevOps Lab 2 - Version 2</h1>
++    <p>Kubernetes rolling update completed successfully!</p>
+aditya@lima-devops:~/devops-lab2$ git commit -q -am "Update application to Version 2"
+aditya@lima-devops:~/devops-lab2$ docker build -q -t adityaporwal18/devops-lab2:v2 .
+sha256:a9c9956c6127ebfee0e5dccee5c5fb1288b936aa42f53ec1ae3f1864c4ad0dcd
+aditya@lima-devops:~/devops-lab2$ docker push adityaporwal18/devops-lab2:v2
+The push refers to repository [docker.io/adityaporwal18/devops-lab2]
+b37b16754da2: Layer already exists 
+9c978d89cc75: Pushed 
+48fb00926fe4: Layer already exists 
+44136fa355b3: Already exists 
+cb82b968e30a: Layer already exists 
+226fb6b313b1: Layer already exists 
+1fbee8b16a46: Layer already exists 
+9f985f21e591: Layer already exists 
+048a0da96888: Pushed 
+67d0c589d812: Layer already exists 
+v2: digest: sha256:a9c9956c6127ebfee0e5dccee5c5fb1288b936aa42f53ec1ae3f1864c4ad0dcd size: 856
+aditya@lima-devops:~/devops-lab2$ docker images adityaporwal18/devops-lab2
+                                                                                                           i Info →   U  In Use
+IMAGE                           ID             DISK USAGE   CONTENT SIZE   EXTRA
+adityaporwal18/devops-lab2:v1   fcbe962da488        223MB         48.5MB    U   
+adityaporwal18/devops-lab2:v2   a9c9956c6127        223MB         48.5MB        
+aditya@lima-devops:~/devops-lab2$ 

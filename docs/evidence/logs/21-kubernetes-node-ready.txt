@@ -1,0 +1,14 @@
+aditya@lima-devops:~$ kubectl get nodes -o wide
+NAME       STATUS   ROLES           AGE   VERSION   INTERNAL-IP    EXTERNAL-IP   OS-IMAGE                         KERNEL-VERSION              CONTAINER-RUNTIME
+minikube   Ready    control-plane   40s   v1.37.0   192.168.49.2   <none>        Debian GNU/Linux 12 (bookworm)   6.8.0-147-generic (arm64)   containerd://2.3.4
+aditya@lima-devops:~$ kubectl get pods -n kube-system
+NAME                               READY   STATUS    RESTARTS   AGE
+coredns-559f6c778d-xg6bs           1/1     Running   0          34s
+etcd-minikube                      1/1     Running   0          40s
+kindnet-69wkz                      1/1     Running   0          34s
+kube-apiserver-minikube            1/1     Running   0          40s
+kube-controller-manager-minikube   1/1     Running   0          40s
+kube-proxy-9w9tb                   1/1     Running   0          34s
+kube-scheduler-minikube            1/1     Running   0          41s
+storage-provisioner                1/1     Running   0          38s
+aditya@lima-devops:~$ 

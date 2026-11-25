@@ -1,0 +1,31 @@
+aditya@lima-devops:~/devops-lab2$ cat compose.yaml
+services:
+  web:
+    image: devops-lab2:v1
+    ports:
+      - "5001:5000"
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+aditya@lima-devops:~/devops-lab2$ docker compose up -d
+[+] up 13/13
+ ✔ Image redis:7-alpine          Pulled                                                                                    5.2s
+ ✔ Network devops-lab2_default   Created                                                                                   0.1s
+ ✔ Container devops-lab2-redis-1 Started                                                                                   0.3s
+ ✔ Container devops-lab2-web-1   Started                                                                                   0.7s
+aditya@lima-devops:~/devops-lab2$ docker compose ps
+NAME                  IMAGE            COMMAND                  SERVICE   CREATED         STATUS         PORTS
+devops-lab2-redis-1   redis:7-alpine   "docker-entrypoint.s…"   redis     6 seconds ago   Up 5 seconds   6379/tcp
+devops-lab2-web-1     devops-lab2:v1   "python app.py"          web       6 seconds ago   Up 4 seconds   0.0.0.0:5001->5000/tcp, [::]:5001->5000/tcp
+aditya@lima-devops:~/devops-lab2$ curl http://localhost:5001
+
+    <h1>DevOps Lab 2 - Version 1</h1>
+    <p>Flask application running in a Docker container.</p>
+    aditya@lima-devops:~/devops-lab2$ docker compose down
+[+] down 3/3
+ ✔ Container devops-lab2-web-1   Removed                                                                                  10.2s
+ ✔ Container devops-lab2-redis-1 Removed                                                                                   0.1s
+ ✔ Network devops-lab2_default   Removed                                                                                   0.1s
+aditya@lima-devops:~/devops-lab2$ 

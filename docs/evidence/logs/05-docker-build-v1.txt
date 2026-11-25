@@ -1,0 +1,54 @@
+aditya@lima-devops:~/devops-lab2$ git diff --stat
+ app.py | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+aditya@lima-devops:~/devops-lab2$ git commit -q -am "Set application to Version 1 for the first image build"
+aditya@lima-devops:~/devops-lab2$ cat Dockerfile
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY app.py .
+
+EXPOSE 5000
+
+CMD ["python", "app.py"]
+aditya@lima-devops:~/devops-lab2$ docker build -t devops-lab2:v1 .
+[+] Building 10.1s (10/10) FINISHED                                                                             docker:default
+ => [internal] load build definition from Dockerfile                                                                      0.0s
+ => => transferring dockerfile: 206B                                                                                      0.0s
+ => [internal] load metadata for docker.io/library/python:3.12-slim                                                       2.9s
+ => [internal] load .dockerignore                                                                                         0.0s
+ => => transferring context: 2B                                                                                           0.0s
+ => [1/5] FROM docker.io/library/python:3.12-slim@sha256:191083cdf6c7bda8c76158983163ead5d5cf7b77cf3033e805bb0f5296f51b4  3.5s
+ => => resolve docker.io/library/python:3.12-slim@sha256:191083cdf6c7bda8c76158983163ead5d5cf7b77cf3033e805bb0f5296f51b4  0.0s
+ => => sha256:cb82b968e30a0eaf3f0c3a4e1a996dacd981119f68d33d1febff34c1122fb106 12.06MB / 12.06MB                          1.0s
+ => => sha256:48fb00926fe468d83ca04ee6775f36350d17e0f328dfcb03aadb5de0c52ae3f6 30.20MB / 30.20MB                          2.6s
+ => => sha256:b37b16754da2430b6225ca41d206fdf4b06d72f378fa321a86dc20ee5823f6d8 1.27MB / 1.27MB                            1.1s
+ => => sha256:226fb6b313b12ce882faf519cb42d6e89f8063b552103e61753eb9573b63fd13 248B / 248B                                0.7s
+ => => extracting sha256:48fb00926fe468d83ca04ee6775f36350d17e0f328dfcb03aadb5de0c52ae3f6                                 0.6s
+ => => extracting sha256:b37b16754da2430b6225ca41d206fdf4b06d72f378fa321a86dc20ee5823f6d8                                 0.0s
+ => => extracting sha256:cb82b968e30a0eaf3f0c3a4e1a996dacd981119f68d33d1febff34c1122fb106                                 0.2s
+ => => extracting sha256:226fb6b313b12ce882faf519cb42d6e89f8063b552103e61753eb9573b63fd13                                 0.0s
+ => [internal] load build context                                                                                         0.0s
+ => => transferring context: 430B                                                                                         0.0s
+ => [2/5] WORKDIR /app                                                                                                    0.2s
+ => [3/5] COPY requirements.txt .                                                                                         0.0s
+ => [4/5] RUN pip install --no-cache-dir -r requirements.txt                                                              2.7s
+ => [5/5] COPY app.py .                                                                                                   0.0s 
+ => exporting to image                                                                                                    0.7s 
+ => => exporting layers                                                                                                   0.5s 
+ => => exporting manifest sha256:059ada3167982513dfb25e805c9093319b6ff11065036983f78169ba0491dd2d                         0.0s 
+ => => exporting config sha256:04900c251dd7ca9c4ba90d97b7a24c544083df77ccf18fc9746d0c1a3cd89bfe                           0.0s 
+ => => exporting attestation manifest sha256:c04b829e34547f01cbd908f86a1c149577f76e09511f06aa16137107122e3a65             0.0s 
+ => => exporting manifest list sha256:fcbe962da488d27fae8c2442ef1e737258ee7706f845335cdd636047c10675e5                    0.0s
+ => => naming to docker.io/library/devops-lab2:v1                                                                         0.0s
+ => => unpacking to docker.io/library/devops-lab2:v1                                                                      0.1s
+aditya@lima-devops:~/devops-lab2$ docker images devops-lab2
+                                                                                                           i Info →   U  In Use
+IMAGE            ID             DISK USAGE   CONTENT SIZE   EXTRA
+devops-lab2:v1   fcbe962da488        223MB         48.5MB        
+aditya@lima-devops:~/devops-lab2$ 

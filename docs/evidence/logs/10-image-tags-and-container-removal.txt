@@ -1,0 +1,17 @@
+aditya@lima-devops:~/devops-lab2$ docker tag devops-lab2:v1 devops-lab2:latest
+aditya@lima-devops:~/devops-lab2$ docker images devops-lab2
+                                                                                                           i Info →   U  In Use
+IMAGE                ID             DISK USAGE   CONTENT SIZE   EXTRA
+devops-lab2:latest   fcbe962da488        223MB         48.5MB    U   
+devops-lab2:v1       fcbe962da488        223MB         48.5MB    U   
+aditya@lima-devops:~/devops-lab2$ docker run -d --name lab2-temp devops-lab2:v1
+9349dfd2ed0652f463913b739bcfd24352c51c6ffcda2eb8fb946a7bec048bbc
+aditya@lima-devops:~/devops-lab2$ docker stop lab2-temp
+lab2-temp
+aditya@lima-devops:~/devops-lab2$ docker rm lab2-temp
+lab2-temp
+aditya@lima-devops:~/devops-lab2$ docker ps -a
+CONTAINER ID   IMAGE            COMMAND           CREATED              STATUS                     PORTS                                         NAMES
+db8517597b22   devops-lab2:v1   "python app.py"   About a minute ago   Up 24 seconds              0.0.0.0:5000->5000/tcp, [::]:5000->5000/tcp   lab2-app
+78d2cce377ba   hello-world      "/hello"          3 minutes ago        Exited (0) 3 minutes ago                                                 musing_antonelli
+aditya@lima-devops:~/devops-lab2$ 

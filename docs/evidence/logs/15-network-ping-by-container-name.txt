@@ -1,0 +1,28 @@
+aditya@lima-devops:~/devops-lab2$ docker network create lab2-network
+08f669ae1f27565dc0abf3efaf46861fcf9986af76f703ed49e0a6327299becd
+aditya@lima-devops:~/devops-lab2$ docker run -d --name network-a --network lab2-network alpine sleep 3600
+Unable to find image 'alpine:latest' locally
+latest: Pulling from library/alpine
+b90627b8f429: Pull complete 
+a1c67c46f05a: Download complete 
+417332e4182f: Download complete 
+Digest: sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf
+Status: Downloaded newer image for alpine:latest
+8f2127a11dedaf2705a99f8003c7d19c901cb2a85398c00bc5d4f1189d1cb12c
+aditya@lima-devops:~/devops-lab2$ docker run -d --name network-b --network lab2-network alpine sleep 3600
+4733ffaff3152e836077424ae0ccf49447ea9ba08476d038ffd9b2e58662af6b
+aditya@lima-devops:~/devops-lab2$ docker ps --filter network=lab2-network
+CONTAINER ID   IMAGE     COMMAND        CREATED         STATUS         PORTS     NAMES
+4733ffaff315   alpine    "sleep 3600"   1 second ago    Up 1 second              network-b
+8f2127a11ded   alpine    "sleep 3600"   3 seconds ago   Up 2 seconds             network-a
+aditya@lima-devops:~/devops-lab2$ docker exec network-a ping -c 4 network-b
+PING network-b (172.18.0.3): 56 data bytes
+64 bytes from 172.18.0.3: seq=0 ttl=64 time=0.784 ms
+64 bytes from 172.18.0.3: seq=1 ttl=64 time=0.986 ms
+64 bytes from 172.18.0.3: seq=2 ttl=64 time=0.065 ms
+64 bytes from 172.18.0.3: seq=3 ttl=64 time=0.130 ms
+
+--- network-b ping statistics ---
+4 packets transmitted, 4 packets received, 0% packet loss
+round-trip min/avg/max = 0.065/0.491/0.986 ms
+aditya@lima-devops:~/devops-lab2$ 

@@ -1,0 +1,13 @@
+aditya@lima-devops:~/devops-lab2$ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' network-b
+172.18.0.3
+aditya@lima-devops:~/devops-lab2$ docker exec network-a ping -c 4 $(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' network-b)
+PING 172.18.0.3 (172.18.0.3): 56 data bytes
+64 bytes from 172.18.0.3: seq=0 ttl=64 time=0.589 ms
+64 bytes from 172.18.0.3: seq=1 ttl=64 time=0.657 ms
+64 bytes from 172.18.0.3: seq=2 ttl=64 time=0.096 ms
+64 bytes from 172.18.0.3: seq=3 ttl=64 time=0.090 ms
+
+--- 172.18.0.3 ping statistics ---
+4 packets transmitted, 4 packets received, 0% packet loss
+round-trip min/avg/max = 0.090/0.358/0.657 ms
+aditya@lima-devops:~/devops-lab2$ 

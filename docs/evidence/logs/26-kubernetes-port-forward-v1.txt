@@ -1,0 +1,11 @@
+aditya@lima-devops:~/devops-lab2$ kubectl port-forward service/devops-lab2-service 8081:5000 > /tmp/port-forward.log 2>&1 &
+[1] 22812
+aditya@lima-devops:~/devops-lab2$ curl http://localhost:8081
+
+    <h1>DevOps Lab 2 - Version 1</h1>
+    <p>Flask application running in a Docker container.</p>
+    aditya@lima-devops:~/devops-lab2$ curl http://localhost:8081/health
+{"status":"healthy"}
+aditya@lima-devops:~/devops-lab2$ kubectl get deployment devops-lab2 -o jsonpath='{.spec.template.spec.containers[0].image}'; echo
+adityaporwal18/devops-lab2:v1
+aditya@lima-devops:~/devops-lab2$ 

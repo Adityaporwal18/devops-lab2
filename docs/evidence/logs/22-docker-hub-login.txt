@@ -1,0 +1,15 @@
+aditya@lima-devops:~$ cd ~/devops-lab2 && docker login
+
+i Info → Using web-based login. To sign in with credentials on the command line, use 'docker login -u <username>'
+         
+Your one-time device confirmation code is: PLSD-SCFC
+Open this URL to authenticate: https://login.docker.com/activate?user_code=PLSD-SCFC
+
+Press ENTER to open the URL in your browser, or Ctrl+C to cancel.
+
+WARNING! Your credentials are stored unencrypted in '/home/aditya/.docker/config.json'.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/go/credential-store/
+
+Login Succeeded
+aditya@lima-devops:~/devops-lab2$ 

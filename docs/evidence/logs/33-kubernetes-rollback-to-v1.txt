@@ -1,0 +1,36 @@
+aditya@lima-devops:~/devops-lab2$ kubectl rollout history deployment/devops-lab2
+deployment.apps/devops-lab2 
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+
+aditya@lima-devops:~/devops-lab2$ kubectl rollout undo deployment/devops-lab2
+Warning: resource deployments/devops-lab2 was previously managed with 'kubectl apply'. Rolling back will not update the kubectl.kubernetes.io/last-applied-configuration annotation, which may cause unexpected behavior on future 'kubectl apply' operations. Consider using 'kubectl apply' with your previous configuration file instead.
+deployment.apps/devops-lab2 rolled back
+aditya@lima-devops:~/devops-lab2$ kubectl rollout status deployment/devops-lab2
+Waiting for deployment "devops-lab2" rollout to finish: 3 out of 4 new replicas have been updated...
+Waiting for deployment "devops-lab2" rollout to finish: 3 out of 4 new replicas have been updated...
+Waiting for deployment "devops-lab2" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "devops-lab2" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "devops-lab2" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "devops-lab2" rollout to finish: 1 old replicas are pending termination...
+deployment "devops-lab2" successfully rolled out
+aditya@lima-devops:~/devops-lab2$ kubectl get deployment devops-lab2 -o jsonpath='{.spec.template.spec.containers[0].image}'; echo
+adityaporwal18/devops-lab2:v1
+aditya@lima-devops:~/devops-lab2$ kubectl get pods
+NAME                           READY   STATUS        RESTARTS   AGE
+devops-lab2-6645fd545f-c95ph   1/1     Running       0          4s
+devops-lab2-6645fd545f-g9v75   1/1     Running       0          5s
+devops-lab2-6645fd545f-t69nv   1/1     Running       0          6s
+devops-lab2-6645fd545f-t85gh   1/1     Running       0          4s
+devops-lab2-6fcdc7ccf8-8qjms   1/1     Terminating   0          43s
+devops-lab2-6fcdc7ccf8-j7wkr   1/1     Terminating   0          43s
+devops-lab2-6fcdc7ccf8-kn5gl   1/1     Terminating   0          34s
+devops-lab2-6fcdc7ccf8-xfsmc   1/1     Terminating   0          35s
+aditya@lima-devops:~/devops-lab2$ kubectl rollout history deployment/devops-lab2
+deployment.apps/devops-lab2 
+REVISION  CHANGE-CAUSE
+2         <none>
+3         <none>
+
+aditya@lima-devops:~/devops-lab2$ 

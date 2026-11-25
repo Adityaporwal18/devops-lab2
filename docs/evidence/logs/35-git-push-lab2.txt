@@ -1,0 +1,24 @@
+aditya@lima-devops:~/devops-lab2$ git status --short
+ M Jenkinsfile
+?? bind-data/
+?? jenkins/
+aditya@lima-devops:~/devops-lab2$ git add Jenkinsfile jenkins/job-config.xml bind-data
+aditya@lima-devops:~/devops-lab2$ git commit -q -m "Update Jenkinsfile for this environment, add job configuration and bind-mount files"
+aditya@lima-devops:~/devops-lab2$ git log --oneline
+e036689 (HEAD -> main) Update Jenkinsfile for this environment, add job configuration and bind-mount files
+af59436 Update application to Version 2
+db120df Use Docker Hub image adityaporwal18/devops-lab2:v1 in the Deployment
+6c69ae6 Set application to Version 1 for the first image build
+4023945 Remove outdated evidence and docs before re-running Lab 2
+b1226b6 (origin/main, origin/HEAD) Initial commit
+aditya@lima-devops:~/devops-lab2$ git push
+Enumerating objects: 22, done.
+Counting objects: 100% (22/22), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (16/16), done.
+Writing objects: 100% (17/17), 2.38 KiB | 610.00 KiB/s, done.
+Total 17 (delta 9), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (9/9), completed with 4 local objects.
+To https://github.com/Adityaporwal18/devops-lab2.git
+   b1226b6..e036689  main -> main
+aditya@lima-devops:~/devops-lab2$ 

@@ -1,127 +1,296 @@
-﻿LAB 2 - CONTAINERIZATION AND KUBERNETES ORCHESTRATION
+LAB 2 - COMMANDS EXECUTED
+=========================
 
-ENVIRONMENT
-lsb_release -a
-docker --version
-docker compose version
-docker run hello-world
-docker ps -a
+Environment: Ubuntu 24.04.5 LTS virtual machine (Lima 2.3.0, Apple M1 MacBook Pro), user aditya, host lima-devops.
+Date: 25 November 2026.
 
-PROJECT / IMAGE BUILD
-docker build -t devops-lab2:v1 .
-docker history devops-lab2:v1
-docker run -d --name lab2-app -p 5000:5000 devops-lab2:v1
-docker ps
-curl http://localhost:5000
-curl http://localhost:5000/health
+Every command listed under a terminal evidence item was extracted from that item's terminal
+log (docs/evidence/logs/), so the commands appear exactly as they were run.
+Items are grouped by lab question; the number at the start of each log/screenshot file name
+gives the real chronological order. The text before '$' is the working directory.
+Steps done in a browser, in an editor or through the Jenkins REST API are described in words.
+Evidence IDs (E01...) match docs/EVIDENCE.md.
 
-CONTAINER / IMAGE MANAGEMENT
-docker stop lab2-app
-docker start lab2-app
-docker ps --filter name=lab2-app
-docker tag devops-lab2:v1 devops-lab2:latest
-docker images devops-lab2
-docker run -d --name lab2-temp devops-lab2:v1
-docker stop lab2-temp
-docker rm lab2-temp
 
-DOCKER COMPOSE
-docker compose up -d
-docker compose ps
-curl http://localhost:5001
-docker compose down
+Q1 - CONTAINERIZE A SAMPLE APPLICATION USING DOCKER
+---------------------------------------------------
 
-DOCKER HUB
-docker login
-docker tag devops-lab2:v1 Adityaporwal18/devops-lab2:v1
-docker push Adityaporwal18/devops-lab2:v1
+[E01] Docker apt repository
+  ~/devops-lab1$ cd ~
+  ~$ sudo install -m 0755 -d /etc/apt/keyrings
+  ~$ sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+  ~$ sudo chmod a+r /etc/apt/keyrings/docker.asc
+  ~$ echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  ~$ sudo apt update
 
-STORAGE - DATA LOSS
-docker run -it --name storage-test ubuntu bash
-echo "Temporary Lab 2 Data" > /tmp/data.txt
-cat /tmp/data.txt
-exit
-docker rm storage-test
-docker run --rm ubuntu cat /tmp/data.txt
+[E02] Docker Engine installation
+  ~$ sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+  ~$ sudo usermod -aG docker $USER
+  ~$ systemctl is-active docker
 
-STORAGE - NAMED VOLUME
-docker volume create lab2-data
-docker run --name volume-test -v lab2-data:/data ubuntu sh -c 'echo "Persistent Lab 2 Data" > /data/data.txt'
-docker rm volume-test
-docker run --rm -v lab2-data:/data ubuntu cat /data/data.txt
-docker volume ls
+[E02] Docker Engine installation
+  Logged out and back in so that the new docker group membership applies
 
-STORAGE - BIND MOUNT
-mkdir -p ~/devops-lab2/bind-data
-echo "Created from Ubuntu host" > ~/devops-lab2/bind-data/host.txt
-docker run --rm -v ~/devops-lab2/bind-data:/data ubuntu cat /data/host.txt
-docker run --rm -v ~/devops-lab2/bind-data:/data ubuntu sh -c 'echo "Created from Docker container" > /data/container.txt'
-cat ~/devops-lab2/bind-data/container.txt
+[E03] Docker versions and hello-world
+  ~$ id -nG
+  ~$ docker --version
+  ~$ docker compose version
+  ~$ docker run hello-world
+  ~$ docker ps -a
 
-DOCKER NETWORK
-docker network create lab2-network
-docker run -d --name network-a --network lab2-network alpine sleep 3600
-docker run -d --name network-b --network lab2-network alpine sleep 3600
-docker ps --filter network=lab2-network
-docker exec network-a ping -c 4 network-b
-docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' network-b
-docker exec network-a ping -c 4 172.19.0.3
-docker network inspect lab2-network
-docker rm -f network-a network-b
-docker network rm lab2-network
+[E04] Clone the repository and remove outdated evidence
+  ~$ git clone https://github.com/Adityaporwal18/devops-lab2.git ~/devops-lab2
+  ~$ cd ~/devops-lab2
+  ~/devops-lab2$ git log --oneline
+  ~/devops-lab2$ ls
+  ~/devops-lab2$ git rm -r -q docs scripts bind-data
+  ~/devops-lab2$ git commit -q -m "Remove outdated evidence and docs before re-running Lab 2"
+  ~/devops-lab2$ git show --stat --oneline HEAD | tail -n 1
+  ~/devops-lab2$ git log --oneline
+  ~/devops-lab2$ ls
 
-KUBERNETES / MINIKUBE
-kubectl version --client
-minikube version
-minikube start --driver=docker
-kubectl get nodes
-minikube status
+[E05] Build image v1
+  ~/devops-lab2$ git diff --stat
+  ~/devops-lab2$ git commit -q -am "Set application to Version 1 for the first image build"
+  ~/devops-lab2$ cat Dockerfile
+  ~/devops-lab2$ docker build -t devops-lab2:v1 .
+  ~/devops-lab2$ docker images devops-lab2
 
-KUBERNETES DEPLOYMENT
-kubectl apply -f kubernetes/deployment.yaml
-kubectl apply -f kubernetes/service.yaml
-kubectl rollout status deployment/devops-lab2
-kubectl get deployments
-kubectl get pods
-kubectl get services
-kubectl port-forward service/devops-lab2-service 8081:5000
+[E05] Build image v1
+  Editor: changed the page text in app.py to "Version 1" before the build
 
-SCALING
-kubectl scale deployment devops-lab2 --replicas=4
-kubectl rollout status deployment/devops-lab2
-kubectl get deployment devops-lab2
-kubectl get pods
+[E06] Image layers
+  ~/devops-lab2$ docker history devops-lab2:v1
 
-VERSION 2 / DOCKER HUB
-docker build -t Adityaporwal18/devops-lab2:v2 .
-docker push Adityaporwal18/devops-lab2:v2
+[E07] Run the container and test it
+  ~/devops-lab2$ docker run -d --name lab2-app -p 5000:5000 devops-lab2:v1
+  ~/devops-lab2$ docker ps
+  ~/devops-lab2$ curl http://localhost:5000
 
-ROLLING UPDATE
-kubectl set image deployment/devops-lab2 devops-lab2=Adityaporwal18/devops-lab2:v2
-kubectl rollout status deployment/devops-lab2
-kubectl get pods
-kubectl get deployment devops-lab2 -o jsonpath='{.spec.template.spec.containers[0].image}'; echo
+[E08] Application in the browser (v1)
+  Browser: opened the application on port 5000 (from the Mac: http://localhost:5050)
 
-ROLLBACK
-kubectl rollout history deployment/devops-lab2
-kubectl rollout undo deployment/devops-lab2
-kubectl rollout status deployment/devops-lab2
-kubectl get deployment devops-lab2 -o jsonpath='{.spec.template.spec.containers[0].image}'; echo
+Q2 - MANAGE DOCKER CONTAINERS AND IMAGES
+----------------------------------------
 
-JENKINS ACCESS TO KUBECTL
-echo 'jenkins ALL=(user) NOPASSWD: /usr/local/bin/kubectl' | sudo tee /etc/sudoers.d/jenkins-kubectl
-sudo chmod 440 /etc/sudoers.d/jenkins-kubectl
-sudo -H -u user kubectl get nodes
+[E09] List, stop and start containers
+  ~/devops-lab2$ docker ps -a
+  ~/devops-lab2$ docker stop lab2-app
+  ~/devops-lab2$ docker ps -a --filter name=lab2-app
+  ~/devops-lab2$ docker start lab2-app
+  ~/devops-lab2$ docker ps --filter name=lab2-app
 
-GIT / GITHUB
-git init
-git branch -M main
-git add .
-git commit -m "Complete Docker and Kubernetes Lab 2"
-git remote add origin https://github.com/Adityaporwal18/devops-lab2.git
-git push -u origin main
+[E10] Tag an image, remove a container
+  ~/devops-lab2$ docker tag devops-lab2:v1 devops-lab2:latest
+  ~/devops-lab2$ docker images devops-lab2
+  ~/devops-lab2$ docker run -d --name lab2-temp devops-lab2:v1
+  ~/devops-lab2$ docker stop lab2-temp
+  ~/devops-lab2$ docker rm lab2-temp
+  ~/devops-lab2$ docker ps -a
 
-FINAL VERIFICATION
-kubectl get deployment devops-lab2
-kubectl get pods
-kubectl get deployment devops-lab2 -o jsonpath='{.spec.template.spec.containers[0].image}'; echo
+[E11] Docker Compose
+  ~/devops-lab2$ cat compose.yaml
+  ~/devops-lab2$ docker compose up -d
+  ~/devops-lab2$ docker compose ps
+  ~/devops-lab2$ curl http://localhost:5001
+
+[E12] Docker Hub login
+  ~$ cd ~/devops-lab2 && docker login
+
+[E13] Push v1 to Docker Hub
+  ~/devops-lab2$ docker tag devops-lab2:v1 adityaporwal18/devops-lab2:v1
+  ~/devops-lab2$ docker push adityaporwal18/devops-lab2:v1
+  ~/devops-lab2$ docker images
+
+[E14] Repository on Docker Hub
+  Browser: opened https://hub.docker.com/r/adityaporwal18/devops-lab2/tags
+
+Q3 - DOCKER STORAGE
+-------------------
+
+[E15] Container-local data is lost
+  ~/devops-lab2$ docker run --name storage-test ubuntu sh -c 'echo "Temporary Lab 2 Data" > /tmp/data.txt && cat /tmp/data.txt'
+  ~/devops-lab2$ docker rm storage-test
+  ~/devops-lab2$ docker run --rm ubuntu cat /tmp/data.txt
+
+[E16] Named volume keeps data
+  ~/devops-lab2$ docker volume create lab2-data
+  ~/devops-lab2$ docker run --name volume-test -v lab2-data:/data ubuntu sh -c 'echo "Persistent Lab 2 Data" > /data/data.txt'
+  ~/devops-lab2$ docker rm volume-test
+  ~/devops-lab2$ docker run --rm -v lab2-data:/data ubuntu cat /data/data.txt
+  ~/devops-lab2$ docker volume ls
+
+[E17] Bind mount shares files both ways
+  ~/devops-lab2$ mkdir -p ~/devops-lab2/bind-data
+  ~/devops-lab2$ echo "Created from Ubuntu host" > ~/devops-lab2/bind-data/host.txt
+  ~/devops-lab2$ docker run --rm -v ~/devops-lab2/bind-data:/data ubuntu cat /data/host.txt
+  ~/devops-lab2$ docker run --rm -v ~/devops-lab2/bind-data:/data ubuntu sh -c 'echo "Created from Docker container" > /data/container.txt'
+  ~/devops-lab2$ cat ~/devops-lab2/bind-data/container.txt
+  ~/devops-lab2$ ls -l ~/devops-lab2/bind-data
+
+Q4 - DOCKER NETWORK
+-------------------
+
+[E18] Ping by container name
+  ~/devops-lab2$ docker network create lab2-network
+  ~/devops-lab2$ docker run -d --name network-a --network lab2-network alpine sleep 3600
+  ~/devops-lab2$ docker run -d --name network-b --network lab2-network alpine sleep 3600
+  ~/devops-lab2$ docker ps --filter network=lab2-network
+  ~/devops-lab2$ docker exec network-a ping -c 4 network-b
+
+[E19] Ping by IP address
+  ~/devops-lab2$ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' network-b
+  ~/devops-lab2$ docker exec network-a ping -c 4 $(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' network-b)
+
+[E20] Inspect the network
+  ~/devops-lab2$ docker network inspect lab2-network
+
+[E21] Remove the test containers and network
+  ~/devops-lab2$ docker rm -f network-a network-b
+  ~/devops-lab2$ docker network rm lab2-network
+  ~/devops-lab2$ docker network ls
+
+Q5 - DEPLOY AN APPLICATION TO KUBERNETES
+----------------------------------------
+
+[E22] Install kubectl and Minikube
+  ~/devops-lab2$ cd ~
+  ~$ curl -sLO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
+  ~$ sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+  ~$ curl -sLO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-arm64
+  ~$ sudo install minikube-linux-arm64 /usr/local/bin/minikube
+  ~$ rm kubectl minikube-linux-arm64
+  ~$ kubectl version --client
+  ~$ minikube version
+
+[E23] Start Minikube
+  ~$ minikube start --driver=docker
+  ~$ kubectl get nodes
+  ~$ minikube status
+
+[E24] Node Ready
+  ~$ kubectl get nodes -o wide
+  ~$ kubectl get pods -n kube-system
+
+[E25] Apply the Deployment and Service
+  ~/devops-lab2$ git diff -U0 kubernetes/deployment.yaml | tail -n 3
+  ~/devops-lab2$ git commit -q -am "Use Docker Hub image adityaporwal18/devops-lab2:v1 in the Deployment"
+  ~/devops-lab2$ kubectl apply -f kubernetes/deployment.yaml
+  ~/devops-lab2$ kubectl apply -f kubernetes/service.yaml
+  ~/devops-lab2$ kubectl rollout status deployment/devops-lab2
+  ~/devops-lab2$ kubectl get deployments
+  ~/devops-lab2$ kubectl get pods -o wide
+  ~/devops-lab2$ kubectl get services
+
+[E25] Apply the Deployment and Service
+  Editor: set the image in kubernetes/deployment.yaml to adityaporwal18/devops-lab2:v1
+
+[E26] Access the Service with port-forward
+  ~/devops-lab2$ kubectl port-forward service/devops-lab2-service 8081:5000 > /tmp/port-forward.log 2>&1 &
+  ~/devops-lab2$ curl http://localhost:8081
+  ~/devops-lab2$ kubectl get deployment devops-lab2 -o jsonpath='{.spec.template.spec.containers[0].image}'; echo
+
+[E27] Kubernetes application in the browser (v1)
+  Browser: opened http://localhost:8081
+
+Q6 - KUBERNETES DEPLOYMENT STRATEGIES
+-------------------------------------
+
+[E28] Scale to four replicas
+  ~/devops-lab2$ kubectl scale deployment devops-lab2 --replicas=4
+  ~/devops-lab2$ kubectl rollout status deployment/devops-lab2
+  ~/devops-lab2$ kubectl get deployment devops-lab2
+  ~/devops-lab2$ kubectl get pods
+
+[E29] Build and push v2
+  ~/devops-lab2$ git diff -U0 app.py | tail -n 5
+  ~/devops-lab2$ git commit -q -am "Update application to Version 2"
+  ~/devops-lab2$ docker build -q -t adityaporwal18/devops-lab2:v2 .
+  ~/devops-lab2$ docker push adityaporwal18/devops-lab2:v2
+  ~/devops-lab2$ docker images adityaporwal18/devops-lab2
+
+[E29] Build and push v2
+  Editor: changed the page text in app.py to "Version 2"
+
+[E30] Rolling update to v2
+  ~/devops-lab2$ kubectl set image deployment/devops-lab2 devops-lab2=adityaporwal18/devops-lab2:v2
+  ~/devops-lab2$ kubectl rollout status deployment/devops-lab2
+  ~/devops-lab2$ kubectl get pods
+  ~/devops-lab2$ kubectl get deployment devops-lab2 -o jsonpath='{.spec.template.spec.containers[0].image}'; echo
+
+[E31] Version 2 response
+  ~/devops-lab2$ kill %1
+  ~/devops-lab2$ kubectl port-forward service/devops-lab2-service 8081:5000 > /tmp/port-forward.log 2>&1 &
+  ~/devops-lab2$ curl http://localhost:8081
+
+[E32] Kubernetes application in the browser (v2)
+  Browser: opened http://localhost:8081
+
+[E33] Rollback
+  ~/devops-lab2$ kubectl rollout history deployment/devops-lab2
+  ~/devops-lab2$ kubectl rollout undo deployment/devops-lab2
+  ~/devops-lab2$ kubectl rollout status deployment/devops-lab2
+  ~/devops-lab2$ kubectl get deployment devops-lab2 -o jsonpath='{.spec.template.spec.containers[0].image}'; echo
+  ~/devops-lab2$ kubectl get pods
+  ~/devops-lab2$ kubectl rollout history deployment/devops-lab2
+
+Q7 - CONFIGURE CONTINUOUS DEPLOYMENT
+------------------------------------
+
+[E34] Give Jenkins access to kubectl
+  ~/devops-lab2$ kill %2
+  ~/devops-lab2$ echo 'jenkins ALL=(aditya) NOPASSWD: /usr/local/bin/kubectl' | sudo tee /etc/sudoers.d/jenkins-kubectl
+  ~/devops-lab2$ sudo chmod 440 /etc/sudoers.d/jenkins-kubectl
+  ~/devops-lab2$ sudo visudo -cf /etc/sudoers.d/jenkins-kubectl
+  ~/devops-lab2$ sudo -u jenkins sudo -H -u aditya kubectl get nodes
+
+[E35] Commit and push the pipeline files
+  ~/devops-lab2$ git status --short
+  ~/devops-lab2$ git add Jenkinsfile jenkins/job-config.xml bind-data
+  ~/devops-lab2$ git commit -q -m "Update Jenkinsfile for this environment, add job configuration and bind-mount files"
+  ~/devops-lab2$ git log --oneline
+  ~/devops-lab2$ git push
+
+[E35] Commit and push the pipeline files
+  Editor: updated the Jenkinsfile (kubectl runs as aditya, added pollSCM trigger, image check and failure message)
+          and added jenkins/job-config.xml
+
+[E36] Pipeline job configuration
+  Jenkins REST API (signed in as the Jenkins user aditya; credentials not recorded):
+    curl -X POST 'http://localhost:8080/createItem?name=devops-lab2' \
+         -H 'Content-Type: application/xml' --data-binary @jenkins/job-config.xml
+    curl -X POST http://localhost:8080/job/devops-lab2/build      # build #1, same as "Build Now"
+
+[E39] Push a manifest change (v2)
+  ~/devops-lab2$ git diff -U0 kubernetes/deployment.yaml | tail -n 3
+  ~/devops-lab2$ git commit -q -am "Deploy application version v2 through the pipeline"
+  ~/devops-lab2$ git push
+  ~/devops-lab2$ date
+
+[E39] Push a manifest change (v2)
+  Editor: set the image in kubernetes/deployment.yaml to adityaporwal18/devops-lab2:v2
+
+[E45] Cluster state after continuous deployment
+  ~/devops-lab2$ kubectl get deployment devops-lab2
+  ~/devops-lab2$ kubectl get pods -o wide
+  ~/devops-lab2$ kubectl get services
+  ~/devops-lab2$ kubectl get deployment devops-lab2 -o jsonpath='{.spec.template.spec.containers[0].image}'; echo
+  ~/devops-lab2$ kubectl rollout history deployment/devops-lab2
+  ~/devops-lab2$ kubectl port-forward service/devops-lab2-service 8081:5000 > /tmp/port-forward.log 2>&1 &
+  ~/devops-lab2$ curl http://localhost:8081
+
+[E46] Deployed application in the browser (v2)
+  Browser: opened http://localhost:8081
+
+Q8-Q9 - TOOLS, DOCUMENTS AND REPORT
+-----------------------------------
+
+[E47] Tool versions
+  ~/devops-lab2$ kill %1
+  ~/devops-lab2$ docker --version && docker compose version
+  ~/devops-lab2$ kubectl version --client | head -n 1 && minikube version | head -n 1
+  ~/devops-lab2$ jenkins --version
+  ~/devops-lab2$ python3 --version && git --version
+
+Repository: https://github.com/Adityaporwal18/devops-lab2
+Docker Hub:  https://hub.docker.com/r/adityaporwal18/devops-lab2

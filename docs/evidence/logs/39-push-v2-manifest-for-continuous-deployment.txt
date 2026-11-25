@@ -1,0 +1,18 @@
+aditya@lima-devops:~/devops-lab2$ git diff -U0 kubernetes/deployment.yaml | tail -n 3
+@@ -17 +17 @@ spec:
+-          image: adityaporwal18/devops-lab2:v1
++          image: adityaporwal18/devops-lab2:v2
+aditya@lima-devops:~/devops-lab2$ git commit -q -am "Deploy application version v2 through the pipeline"
+aditya@lima-devops:~/devops-lab2$ git push
+Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (4/4), done.
+Writing objects: 100% (4/4), 407 bytes | 407.00 KiB/s, done.
+Total 4 (delta 2), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (2/2), completed with 2 local objects.
+To https://github.com/Adityaporwal18/devops-lab2.git
+   e036689..91e8441  main -> main
+aditya@lima-devops:~/devops-lab2$ date
+Wed Nov 25 13:59:37 IST 2026
+aditya@lima-devops:~/devops-lab2$ 

@@ -1,0 +1,28 @@
+aditya@lima-devops:~/devops-lab2$ docker tag devops-lab2:v1 adityaporwal18/devops-lab2:v1
+aditya@lima-devops:~/devops-lab2$ docker push adityaporwal18/devops-lab2:v1
+The push refers to repository [docker.io/adityaporwal18/devops-lab2]
+44136fa355b3: Pushed 
+b37b16754da2: Pushed 
+48fb00926fe4: Pushed 
+61539a0bc59f: Pushed 
+cb82b968e30a: Pushed 
+226fb6b313b1: Pushed 
+1fbee8b16a46: Pushed 
+67d0c589d812: Pushed 
+9f985f21e591: Pushed 
+ba99bd5cd9f6: Pushed 
+v1: digest: sha256:fcbe962da488d27fae8c2442ef1e737258ee7706f845335cdd636047c10675e5 size: 856
+aditya@lima-devops:~/devops-lab2$ docker images
+                                                                                                           i Info →   U  In Use
+IMAGE                                                                          ID             DISK USAGE   CONTENT SIZE   EXTRA
+adityaporwal18/devops-lab2:v1                                                  fcbe962da488        223MB         48.5MB    U   
+alpine:latest                                                                  f59abe656b69       13.6MB         4.28MB        
+devops-lab2:latest                                                             fcbe962da488        223MB         48.5MB    U   
+devops-lab2:v1                                                                 fcbe962da488        223MB         48.5MB    U   
+gcr.io/k8s-minikube/kicbase:v0.0.51                                            84eb673a845f       1.83GB          493MB        
+gcr.io/k8s-minikube/kicbase@sha256:4a1c825b61479e6c898851ea66f13c620aaeab6002746e95067fc2c4b38a0b24
+                                                                               4a1c825b6147       1.83GB          493MB    U   
+hello-world:latest                                                             1e4c05b897a7       22.6kB         10.3kB    U   
+redis:7-alpine                                                                 7f7d30b7fdd0       59.3MB         17.4MB        
+ubuntu:latest                                                                  d66b366dac61        181MB         44.9MB        
+aditya@lima-devops:~/devops-lab2$ 

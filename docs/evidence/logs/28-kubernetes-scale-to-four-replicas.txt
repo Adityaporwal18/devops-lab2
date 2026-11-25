@@ -1,0 +1,14 @@
+aditya@lima-devops:~/devops-lab2$ kubectl scale deployment devops-lab2 --replicas=4
+deployment.apps/devops-lab2 scaled
+aditya@lima-devops:~/devops-lab2$ kubectl rollout status deployment/devops-lab2
+deployment "devops-lab2" successfully rolled out
+aditya@lima-devops:~/devops-lab2$ kubectl get deployment devops-lab2
+NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+devops-lab2   4/4     4            4           46s
+aditya@lima-devops:~/devops-lab2$ kubectl get pods
+NAME                           READY   STATUS    RESTARTS   AGE
+devops-lab2-6645fd545f-86gdw   1/1     Running   0          47s
+devops-lab2-6645fd545f-dgxl2   1/1     Running   0          4s
+devops-lab2-6645fd545f-jvt62   1/1     Running   0          4s
+devops-lab2-6645fd545f-m5cxn   1/1     Running   0          47s
+aditya@lima-devops:~/devops-lab2$ 

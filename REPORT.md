@@ -1,256 +1,218 @@
-﻿# Lab 2 Report â€” Containerization & Kubernetes Orchestration
+﻿# Lab 2 Report - Containerization & Kubernetes Orchestration
+
+**Course:** DevOps and Automation Lab (ENSP461)  
+**Student:** Aditya Porwal  
+**Repository:** https://github.com/Adityaporwal18/devops-lab2  
+**Docker Hub:** https://hub.docker.com/r/adityaporwal18/devops-lab2  
+**Environment:** Ubuntu 24.04.5 LTS virtual machine (Lima 2.3.0) on a MacBook Pro (Apple M1, macOS 26.4)  
+**Date of this run:** 25 November 2026
+
+[Repository overview](README.md) | [Evidence gallery](docs/EVIDENCE.md) | [Commands executed](commands.txt)
 
 ## 1. Aim
 
-To develop a containerized application workflow using Docker and orchestrate its deployment using Kubernetes. The lab demonstrates image creation, container lifecycle management, registry usage, Docker Compose, storage, networking, Kubernetes deployment, scaling, rolling updates, rollback, and Jenkins-based continuous deployment.
+To containerize a sample application with Docker and orchestrate it with Kubernetes: build and run an image, manage containers and images, publish to a registry, demonstrate Docker storage and networking, deploy to Kubernetes with Minikube, scale, update and roll back the deployment, and automate the deployment with Jenkins.
 
-## 2. Environment and Tools
+## 2. Environment and tools
 
-- Ubuntu 26.04 LTS under WSL2
-- Docker Desktop with WSL integration
-- Docker Engine / CLI and Docker Compose
-- Docker Hub
-- Python Flask
-- Kubernetes
-- Minikube using the Docker driver
-- kubectl
-- Jenkins
-- Git and GitHub
+| Component | Observed value |
+|---|---|
+| Operating system | Ubuntu 24.04.5 LTS, aarch64 (virtual machine with 4 CPUs and 4 GiB RAM) |
+| Docker Engine / Compose | 29.10.1 / v5.8.0 (Docker's official apt repository) |
+| Registry | Docker Hub, account `adityaporwal18` |
+| kubectl / Minikube | v1.37.2 / v1.39.0 (Docker driver) |
+| Kubernetes | v1.37.0, containerd 2.3.4, single node |
+| Jenkins | 2.580.2 (installed in Lab 1) |
+| Python / Flask | Base image `python:3.12-slim`, Flask 3.1.2 |
 
-Environment verification is included in the evidence gallery.
+Evidence: [tool versions](docs/evidence/screenshots/47-tool-versions.png)
 
-## 3. Sample Application
+## 3. Sample application
 
-A small Flask web application was used. The application listens on port `5000`, displays the Lab 2 page, and provides a `/health` endpoint.
+[app.py](app.py) is a small Flask web application. It listens on port 5000, serves a page that shows the application version at `/`, and returns `{"status":"healthy"}` at `/health`. Version 1 and Version 2 differ only in the page text, which makes the running version easy to see.
 
-## 4. Experiment 1 â€” Docker Containerization
+## Q1 - Containerize a sample application using Docker
 
-The application was containerized using a `Dockerfile` based on `python:3.12-slim`.
+**Procedure.** Docker Engine was installed from Docker's apt repository and verified with `hello-world`. The image was built from the [Dockerfile](Dockerfile) and started as a container:
 
-The Dockerfile performs the following operations:
-
-1. Uses the Python slim base image.
-2. Sets `/app` as the working directory.
-3. Copies `requirements.txt`.
-4. Installs dependencies.
-5. Copies `app.py`.
-6. Exposes port `5000`.
-7. Starts the Flask application.
-
-The image was built as `devops-lab2:v1`. `docker history devops-lab2:v1` was used to inspect the image layers. A container was started with port `5000` published to the host, and the application was verified using `curl` and a browser.
-
-**Result:** The sample application was successfully containerized and executed with Docker.
-
-## 5. Experiment 2 â€” Docker Containers and Images
-
-Docker lifecycle commands were used to list, start, stop and remove containers. The image was tagged as both `v1` and `latest`.
-
-The application image was tagged for Docker Hub and pushed to:
-
-```text
-Adityaporwal18/devops-lab2:v1
+```bash
+docker build -t devops-lab2:v1 .
+docker history devops-lab2:v1
+docker run -d --name lab2-app -p 5000:5000 devops-lab2:v1
+curl http://localhost:5000
+curl http://localhost:5000/health
 ```
 
-A Docker Compose configuration was also created with two services:
+**Image layers.** `docker history` shows the six Dockerfile steps on top of the base image:
 
-- `web` â€” Flask application
-- `redis` â€” Redis 7 Alpine
+| Dockerfile instruction | Layer size |
+|---|---|
+| `WORKDIR /app` | 8.19 kB |
+| `COPY requirements.txt .` | 12.3 kB |
+| `RUN pip install --no-cache-dir -r requirements.txt` | 15.5 MB |
+| `COPY app.py .` | 12.3 kB |
+| `EXPOSE 5000`, `CMD ["python", "app.py"]` | 0 B (metadata only) |
 
-The Compose web service was exposed on host port `5001`.
+**Result.** The image `devops-lab2:v1` (223 MB on disk) was built, and the container answered on port 5000 with the Version 1 page and a healthy status.
 
-**Result:** Container/image lifecycle operations, tagging, registry publishing and multi-container Compose execution were demonstrated.
+![Container running and answering](docs/evidence/screenshots/07-run-container-and-curl.png)
 
-## 6. Experiment 3 â€” Docker Storage
+Evidence: [Q1 in the gallery](docs/EVIDENCE.md#q1---containerize-a-sample-application-using-docker)
 
-### 6.1 Container-local data loss
+## Q2 - Manage Docker containers and images
 
-A text file was created inside an Ubuntu container. After the container was deleted, a new container could not access `/tmp/data.txt`, demonstrating that data stored only in a container writable layer is lost with the container.
+| Task | Commands | Result |
+|---|---|---|
+| List, stop, start | `docker ps -a`, `docker stop lab2-app`, `docker start lab2-app` | Status changed from Up to Exited and back to Up |
+| Tag | `docker tag devops-lab2:v1 devops-lab2:latest` | Two tags for the same image ID |
+| Remove | `docker run -d --name lab2-temp ...`, `docker stop`, `docker rm` | Temporary container removed |
+| Compose | `docker compose up -d`, `docker compose ps`, `docker compose down` | Web service (port 5001) and Redis started and removed together |
+| Registry | `docker login`, `docker tag`, `docker push adityaporwal18/devops-lab2:v1` | Image published on Docker Hub |
 
-### 6.2 Named volume persistence
+![Push to Docker Hub](docs/evidence/screenshots/23-docker-hub-push-v1.png)
 
-A named volume called `lab2-data` was mounted at `/data`. Data was written to the volume, the original container was removed, and a new container mounted the same volume. The text `Persistent Lab 2 Data` remained available.
+Evidence: [Q2 in the gallery](docs/EVIDENCE.md#q2---manage-docker-containers-and-images)
 
-### 6.3 Bind mount
+## Q3 - Docker storage
 
-A host directory `~/devops-lab2/bind-data` was mounted into an Ubuntu container. A host-created file was visible in the container, and a container-created file was visible on the Ubuntu host.
+| Case | What was done | Observed |
+|---|---|---|
+| Container-local data | File written inside a container, container removed, file read from a new container | `cat: /tmp/data.txt: No such file or directory` - the data is lost |
+| Named volume | File written to volume `lab2-data`, container removed, volume mounted in a new container | `Persistent Lab 2 Data` - the data survives |
+| Bind mount | Host directory `bind-data/` mounted into containers | A host file is readable in the container, and a file written by the container appears on the host |
 
-**Result:** Ephemeral storage, named-volume persistence, and two-way bind-mount behavior were demonstrated.
+![Named volume persistence](docs/evidence/screenshots/13-storage-named-volume.png)
 
-## 7. Experiment 4 â€” Docker Networking
+Evidence: [Q3 in the gallery](docs/EVIDENCE.md#q3---docker-storage)
 
-A custom bridge network called `lab2-network` was created. Two Alpine containers, `network-a` and `network-b`, were attached to it.
+## Q4 - Docker network
 
-Communication was verified in two ways:
+A user-defined bridge network `lab2-network` (subnet 172.18.0.0/16) was created and two Alpine containers were attached to it.
 
-1. By container name: `network-a` successfully pinged `network-b`.
-2. By IP address: `network-a` successfully pinged the IPv4 address of `network-b`.
+| Test | Command | Observed |
+|---|---|---|
+| By name | `docker exec network-a ping -c 4 network-b` | 4 packets sent, 4 received - Docker's built-in DNS resolved the name to 172.18.0.3 |
+| By IP | `docker exec network-a ping -c 4 172.18.0.3` | 0% packet loss |
+| Inspect | `docker network inspect lab2-network` | Bridge driver, both containers attached (172.18.0.2 and 172.18.0.3) |
 
-`docker network inspect lab2-network` showed both containers on the same `172.19.0.0/16` subnet in the captured run.
+![Ping by container name](docs/evidence/screenshots/15-network-ping-by-container-name.png)
 
-**Result:** Docker DNS-based name resolution and direct IP communication were both demonstrated.
+Evidence: [Q4 in the gallery](docs/EVIDENCE.md#q4---docker-network)
 
-## 8. Experiment 5 â€” Kubernetes Deployment with Minikube
+## Q5 - Deploy an application to Kubernetes
 
-`kubectl` and Minikube were installed and verified. Minikube was started using the Docker driver.
+**Procedure.** kubectl and Minikube were installed and a single-node cluster was started with `minikube start --driver=docker`. The [Deployment](kubernetes/deployment.yaml) (2 replicas, image from Docker Hub) and the [Service](kubernetes/service.yaml) (NodePort 30080, port 5000) were applied:
 
-```text
-minikube start --driver=docker
-```
-
-`kubectl get nodes` showed the `minikube` control-plane node in `Ready` state.
-
-Two manifests were created:
-
-- `kubernetes/deployment.yaml`
-- `kubernetes/service.yaml`
-
-The Deployment initially used two replicas. The NodePort Service mapped port `5000` to node port `30080`.
-
-The application was verified through Kubernetes port forwarding:
-
-```text
+```bash
+kubectl apply -f kubernetes/deployment.yaml
+kubectl apply -f kubernetes/service.yaml
+kubectl rollout status deployment/devops-lab2
+kubectl get deployments
+kubectl get pods -o wide
 kubectl port-forward service/devops-lab2-service 8081:5000
 ```
 
-The application was accessible at `http://localhost:8081`.
+**Result.** The node became Ready, the Deployment reached 2/2 with two Running pods, and the Service returned the Version 1 page through port-forward on 8081.
 
-**Result:** The Dockerized application was successfully deployed to Kubernetes and exposed through a Service.
+![Deployment and Service applied](docs/evidence/screenshots/25-kubernetes-deploy-v1.png)
 
-## 9. Experiment 6 â€” Scaling
+Evidence: [Q5 in the gallery](docs/EVIDENCE.md#q5---deploy-an-application-to-kubernetes)
 
-The Deployment was scaled from 2 replicas to 4 replicas:
+## Q6 - Kubernetes deployment strategies
 
-```text
-kubectl scale deployment devops-lab2 --replicas=4
+| Strategy | Command | Observed |
+|---|---|---|
+| Scaling | `kubectl scale deployment devops-lab2 --replicas=4` | Deployment 4/4, four Running pods |
+| Rolling update | `kubectl set image deployment/devops-lab2 devops-lab2=adityaporwal18/devops-lab2:v2` | Rollout completed; four new pods Running while the old pods terminate; page shows Version 2 |
+| Rollback | `kubectl rollout undo deployment/devops-lab2` | Image back to `adityaporwal18/devops-lab2:v1`; history changes from revisions 1, 2 to 2, 3 |
+
+Version 2 was built from the changed `app.py` and pushed to Docker Hub before the update.
+
+![Rolling update to v2](docs/evidence/screenshots/30-kubernetes-rolling-update-v2.png)
+
+![Rollback to v1](docs/evidence/screenshots/33-kubernetes-rollback-to-v1.png)
+
+Evidence: [Q6 in the gallery](docs/EVIDENCE.md#q6---kubernetes-deployment-strategies)
+
+## Q7 - Configure continuous deployment
+
+**Configuration.** The Jenkins job `devops-lab2` ([job-config.xml](jenkins/job-config.xml)) reads the [Jenkinsfile](Jenkinsfile) from this GitHub repository. Its stages are:
+
+| Stage | What it does |
+|---|---|
+| Checkout | Checks out the repository |
+| Deploy to Kubernetes | `kubectl apply` for the Deployment and Service, then `kubectl rollout status` |
+| Verify | Lists Deployments, pods and Services and prints the deployed image |
+
+Jenkins runs as its own Linux user, so a sudoers rule allows `jenkins` to run `/usr/local/bin/kubectl` as `aditya`, the user that owns the Minikube configuration. The trigger is `pollSCM('H/2 * * * *')`.
+
+**Results.**
+
+| Build | Started | Cause | Revision | What was deployed | Result |
+|---|---|---|---|---|---|
+| #1 | 13:58:36 | Started by user Aditya Porwal | `e036689` | Manifest with v1 and 2 replicas (`deployment configured`) | SUCCESS, 14.5 s |
+| #2 | 14:00:12 | Started by an SCM change | `91e8441` | Manifest changed to v2 | SUCCESS, 7.7 s |
+
+**Continuous deployment demonstration.** The image tag in `kubernetes/deployment.yaml` was changed from v1 to v2 and pushed at 13:59:37. No build was started manually. Polling at 14:00:00 reported *Changes found*, build #2 started at 14:00:12, applied the manifest and the cluster moved to `adityaporwal18/devops-lab2:v2`.
+
+![Build #2 started by an SCM change](docs/evidence/screenshots/40-jenkins-build-2-started-by-scm-change.png)
+
+![Cluster state after build #2](docs/evidence/screenshots/45-final-kubernetes-state-v2.png)
+
+Evidence: [Q7 in the gallery](docs/EVIDENCE.md#q7---configure-continuous-deployment)
+
+## Q8 - Record all tools and documents
+
+| Record | Location |
+|---|---|
+| Image definition | [Dockerfile](Dockerfile), [requirements.txt](requirements.txt) |
+| Compose file | [compose.yaml](compose.yaml) |
+| Kubernetes manifests | [kubernetes/deployment.yaml](kubernetes/deployment.yaml), [kubernetes/service.yaml](kubernetes/service.yaml) |
+| Pipeline | [Jenkinsfile](Jenkinsfile), [jenkins/job-config.xml](jenkins/job-config.xml) |
+| Commands | [commands.txt](commands.txt) (extracted from the terminal logs) |
+| Screenshots with captions | [docs/EVIDENCE.md](docs/EVIDENCE.md) |
+| Terminal logs and Jenkins console logs | [docs/evidence/logs](docs/evidence/logs) |
+| Bind-mount files created in Q3 | [bind-data](bind-data) |
+
+## Q9 - Containerization and orchestration report
+
+### Architecture
+
+```mermaid
+flowchart LR
+    A[app.py + Dockerfile] -->|docker build| B[Image devops-lab2 v1 / v2]
+    B -->|docker push| C[Docker Hub<br/>adityaporwal18/devops-lab2]
+    D[GitHub<br/>manifests + Jenkinsfile] -. polled every ~2 min .-> E[Jenkins job devops-lab2]
+    E -->|kubectl apply| F[Minikube cluster]
+    C -->|image pull| F
+    F --> G[Deployment devops-lab2<br/>pods]
+    G --> H[Service devops-lab2-service<br/>NodePort 30080 / port-forward 8081]
 ```
 
-`kubectl get deployment` showed `4/4` ready and `kubectl get pods` showed four running pods.
+### Observations
 
-**Result:** Kubernetes horizontal replica scaling was demonstrated.
+- A container's writable layer is deleted with the container. Named volumes and bind mounts keep data outside that layer.
+- On a user-defined bridge network containers reach each other by name, because Docker provides DNS for that network.
+- Docker Hub repository names must be lowercase. The image is `adityaporwal18/devops-lab2` even though the GitHub account is written `Adityaporwal18`.
+- The Docker Hub image was built on an ARM machine, so it is published for `linux/arm64`.
+- Right after `minikube start` the node was `NotReady` for a few seconds and became `Ready` once the network plugin was running.
+- Minikube chose 3072 MB of memory and warned that this is high for a 3.9 GB VM. The cluster stayed stable during the lab.
+- During the rolling update Kubernetes started new pods before removing old ones, so pods of both versions existed at the same time.
+- `kubectl rollout undo` printed a warning that the rollback does not update the `last-applied-configuration` annotation. The Git manifest stayed the source of truth, and the next pipeline run applied it again.
+- Build #1 changed the Deployment back to 2 replicas, because the manifest in Git says 2. Manual changes such as `kubectl scale` are overwritten by the next deployment from Git.
 
-## 10. Experiment 6 â€” Rolling Update
+### Result summary
 
-A second version of the application was created and built as:
+| Question | Outcome |
+|---|---|
+| Q1 | Image built and container verified with curl and browser |
+| Q2 | Lifecycle, tagging, Compose and Docker Hub push completed |
+| Q3 | Data loss, named-volume persistence and bind mount demonstrated |
+| Q4 | Name-based and IP-based communication on a custom network |
+| Q5 | Deployment (2/2) and Service running on Minikube |
+| Q6 | Scaled to 4, rolling update to v2, rollback to v1 |
+| Q7 | Jenkins deployed v2 automatically after a Git push |
 
-```text
-Adityaporwal18/devops-lab2:v2
-```
+## Conclusion
 
-The v2 image was pushed to Docker Hub. The Deployment image was then updated to v2. `kubectl rollout status` showed Kubernetes progressively replacing the old replicas with new replicas. The browser displayed the Version 2 page.
-
-**Result:** A Kubernetes rolling update from v1 to v2 completed successfully.
-
-## 11. Experiment 6 â€” Rollback
-
-`kubectl rollout history deployment/devops-lab2` showed multiple revisions. The Deployment was rolled back using:
-
-```text
-kubectl rollout undo deployment/devops-lab2
-```
-
-The rollout completed successfully, and image verification showed `Adityaporwal18/devops-lab2:v1` after rollback.
-
-**Result:** Kubernetes rollback to the previous Deployment revision was demonstrated successfully.
-
-## 12. Experiment 7 â€” Continuous Deployment with Jenkins
-
-A Jenkins Pipeline was configured from the GitHub repository.
-
-The Jenkinsfile performs the following operations:
-
-1. Checks out the GitHub repository.
-2. Applies `kubernetes/deployment.yaml`.
-3. Applies `kubernetes/service.yaml`.
-4. Waits for `deployment/devops-lab2` rollout completion.
-5. Lists Deployments, Pods and Services for verification.
-6. Prints a success message in the post-success section.
-
-The captured Jenkins run shows:
-
-- GitHub checkout.
-- Deployment and Service manifest application.
-- Rolling Deployment progress.
-- `deployment "devops-lab2" successfully rolled out`.
-- Kubernetes resource verification.
-- `Continuous deployment completed successfully!`.
-- `Finished: SUCCESS`.
-
-The final captured Kubernetes state shows two running pods and the Deployment using:
-
-```text
-Adityaporwal18/devops-lab2:v2
-```
-
-**Result:** Kubernetes manifest application and rollout verification were automated through Jenkins.
-
-## 13. Architecture
-
-```text
-GitHub Repository
-       |
-       v
-    Jenkins
-       |
-       | kubectl apply
-       v
-Minikube / Kubernetes
-       |
-       v
-    Deployment
-       |
-       +---- Pod
-       +---- Pod
-       |
-       v
-     Service
-       |
-       v
-Flask Application
-```
-
-Docker Hub provides the container images used by the Kubernetes Deployment.
-
-## 14. Observations
-
-- Docker Desktop WSL integration must be enabled before the Docker CLI is available inside Ubuntu.
-- First-time image pulls and the first Minikube startup can be slow because base images and Kubernetes components must be downloaded.
-- Docker image layers can be inspected using `docker history`.
-- Container writable-layer data does not survive container deletion.
-- Named volumes persist independently of container lifecycle.
-- Bind mounts directly map a host path into a container.
-- User-defined bridge networks provide automatic container-name DNS resolution.
-- Kubernetes Deployments manage desired replica count and pod replacement.
-- During rolling updates, old pods can temporarily appear as `Terminating` while new pods become `Running`.
-- Rollout history enables recovery to a previous Deployment revision.
-- Jenkins can automate manifest application, rollout waiting and post-deployment verification.
-
-## 15. Result Summary
-
-The following were successfully demonstrated:
-
-1. Docker and Docker Compose verification.
-2. Docker image creation.
-3. Image-layer inspection.
-4. Application container execution.
-5. Container lifecycle management.
-6. Image tagging and Docker Hub publishing.
-7. Docker Compose multi-container execution.
-8. Container-local data loss.
-9. Named-volume persistence.
-10. Bind mounts.
-11. Custom Docker networking.
-12. Name-based and IP-based container communication.
-13. Minikube Kubernetes cluster setup.
-14. Deployment and Service creation.
-15. Kubernetes application access.
-16. Replica scaling from 2 to 4.
-17. Rolling update from v1 to v2.
-18. Rollback to the previous revision.
-19. Jenkins-driven Kubernetes deployment.
-20. Final Kubernetes v2 state verification.
-
-## 16. Conclusion
-
-The lab implemented an end-to-end introductory DevOps containerization and orchestration workflow. Docker packaged and managed the application, Docker Hub stored versioned images, Docker storage and networking features were demonstrated, Kubernetes on Minikube managed application replicas and deployment strategies, and Jenkins automated deployment manifest application and rollout verification.
-
-For screenshot evidence corresponding to each experiment, see [`docs/EVIDENCE.md`](docs/EVIDENCE.md).
+The application was packaged as a Docker image, published to Docker Hub and run both as a single container and with Compose. Storage and networking behaviour were demonstrated with small experiments. On Kubernetes the application was deployed, scaled, updated and rolled back, and a Jenkins pipeline now applies the manifests from GitHub whenever they change. The cluster is a local single-node Minikube, so the deployment is a lab environment, not a production setup.

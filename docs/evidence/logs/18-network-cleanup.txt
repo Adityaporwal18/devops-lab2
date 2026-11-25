@@ -1,0 +1,11 @@
+aditya@lima-devops:~/devops-lab2$ docker rm -f network-a network-b
+network-a
+network-b
+aditya@lima-devops:~/devops-lab2$ docker network rm lab2-network
+lab2-network
+aditya@lima-devops:~/devops-lab2$ docker network ls
+NETWORK ID     NAME      DRIVER    SCOPE
+363c02d25ed6   bridge    bridge    local
+f326cc367829   host      host      local
+e504e3627e22   none      null      local
+aditya@lima-devops:~/devops-lab2$ 

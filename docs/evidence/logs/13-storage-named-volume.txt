@@ -1,0 +1,12 @@
+aditya@lima-devops:~/devops-lab2$ docker volume create lab2-data
+lab2-data
+aditya@lima-devops:~/devops-lab2$ docker run --name volume-test -v lab2-data:/data ubuntu sh -c 'echo "Persistent Lab 2 Data" > /data/data.txt'
+aditya@lima-devops:~/devops-lab2$ docker rm volume-test
+volume-test
+aditya@lima-devops:~/devops-lab2$ docker run --rm -v lab2-data:/data ubuntu cat /data/data.txt
+Persistent Lab 2 Data
+aditya@lima-devops:~/devops-lab2$ docker volume ls
+DRIVER    VOLUME NAME
+local     db7d6ea7316b7e75617ceae50021e7f9abb3b697b161789ff4c3b247c4af1dad
+local     lab2-data
+aditya@lima-devops:~/devops-lab2$ 

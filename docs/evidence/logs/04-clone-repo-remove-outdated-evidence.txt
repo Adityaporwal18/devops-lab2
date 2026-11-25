@@ -1,0 +1,24 @@
+aditya@lima-devops:~$ git clone https://github.com/Adityaporwal18/devops-lab2.git ~/devops-lab2
+Cloning into '/home/aditya/devops-lab2'...
+remote: Enumerating objects: 63, done.
+remote: Counting objects: 100% (63/63), done.
+remote: Compressing objects: 100% (53/53), done.
+remote: Total 63 (delta 6), reused 63 (delta 6), pack-reused 0 (from 0)
+Receiving objects: 100% (63/63), 2.53 MiB | 3.17 MiB/s, done.
+Resolving deltas: 100% (6/6), done.
+aditya@lima-devops:~$ cd ~/devops-lab2
+aditya@lima-devops:~/devops-lab2$ git log --oneline
+b1226b6 (HEAD -> main, origin/main, origin/HEAD) Initial commit
+aditya@lima-devops:~/devops-lab2$ ls
+Dockerfile   README.md  app.py     commands.txt  docs        requirements.txt
+Jenkinsfile  REPORT.md  bind-data  compose.yaml  kubernetes  scripts
+aditya@lima-devops:~/devops-lab2$ git rm -r -q docs scripts bind-data
+aditya@lima-devops:~/devops-lab2$ git commit -q -m "Remove outdated evidence and docs before re-running Lab 2"
+aditya@lima-devops:~/devops-lab2$ git show --stat --oneline HEAD | tail -n 1
+ 45 files changed, 527 deletions(-)
+aditya@lima-devops:~/devops-lab2$ git log --oneline
+4023945 (HEAD -> main) Remove outdated evidence and docs before re-running Lab 2
+b1226b6 (origin/main, origin/HEAD) Initial commit
+aditya@lima-devops:~/devops-lab2$ ls
+Dockerfile  Jenkinsfile  README.md  REPORT.md  app.py  commands.txt  compose.yaml  kubernetes  requirements.txt
+aditya@lima-devops:~/devops-lab2$ 

@@ -1,0 +1,14 @@
+aditya@lima-devops:~/devops-lab2$ kill %1
+aditya@lima-devops:~/devops-lab2$ docker --version && docker compose version
+Docker version 29.10.1, build c48360f
+[1]+  Terminated              kubectl port-forward service/devops-lab2-service 8081:5000 > /tmp/port-forward.log 2>&1
+Docker Compose version v5.8.0
+aditya@lima-devops:~/devops-lab2$ kubectl version --client | head -n 1 && minikube version | head -n 1
+Client Version: v1.37.2
+minikube version: v1.39.0
+aditya@lima-devops:~/devops-lab2$ jenkins --version
+2.580.2
+aditya@lima-devops:~/devops-lab2$ python3 --version && git --version
+Python 3.12.3
+git version 2.43.0
+aditya@lima-devops:~/devops-lab2$ 
