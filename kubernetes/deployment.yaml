@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: devops-lab2
-          image: adityaporwal18/devops-lab2:v1
+          image: adityaporwal18/devops-lab2:v2
           ports:
             - containerPort: 5000
 
